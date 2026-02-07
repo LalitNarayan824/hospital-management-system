@@ -3,11 +3,15 @@ import {
     AppointmentType,
     BloodGroup,
     Gender,
+    LeaveStatus,
     OrderStatus,
     PatientDocumentType,
     PatientDocumentUploadedBy,
     PaymentStatus,
     PharmacyCategory,
+    RefundStatus,
+    TicketPriority,
+    TicketStatus,
     UserRole,
 } from "@/lib/db/types";
 import { pgEnum } from "drizzle-orm/pg-core";
@@ -47,3 +51,13 @@ export const pharmacyCategoryEnum = pgEnum(
     "pharmacy_category",
     PharmacyCategory
 );
+
+// Support Ticket Enums
+export const ticketStatusEnum = pgEnum("ticket_status", TicketStatus);
+export const ticketPriorityEnum = pgEnum("ticket_priority", TicketPriority);
+
+// Leave Enums
+export const leaveStatusEnum = pgEnum("leave_status", LeaveStatus);
+
+// Refund Enums
+export const refundStatusEnum = pgEnum("refund_status", RefundStatus);

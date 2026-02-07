@@ -1,10 +1,18 @@
 import {
+    char,
+    date,
+    index,
+    pgTable,
+    text,
+    uuid,
+    varchar,
+} from "drizzle-orm/pg-core";
+import {
     bloodGroupEnum,
     genderEnum,
     patientDocumentTypeEnum,
     patientDocumentUploadedByEnum,
-} from "@/lib/db/enums";
-import { char, date, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
+} from "./enums";
 import { timestamps } from "./timestamps";
 import { users } from "./users";
 
@@ -25,19 +33,26 @@ export const patients = pgTable("patients", {
     emergencyContact: char("emergency_contact", { length: 10 }),
 });
 
-export const patientDocuments = pgTable("patient_documents", {
-    id: uuid("id").primaryKey().defaultRandom(),
+export const patientDocuments = pgTable(
+    "patient_documents",
+    {
+        id: uuid("id").primaryKey().defaultRandom(),
 
-    patientId: uuid("patient_id")
-        .notNull()
-        .references(() => users.id, { onDelete: "cascade" }),
+        patientId: uuid("patient_id")
+            .notNull()
+            .references(() => users.id, { onDelete: "cascade" }),
 
-    fileUrl: text("file_url").notNull(),
-    type: patientDocumentTypeEnum("type").notNull(),
-    uploadedBy: patientDocumentUploadedByEnum("uploaded_by").notNull(),
+        fileUrl: text("file_url").notNull(),
+        type: patientDocumentTypeEnum("type").notNull(),
+        uploadedBy: patientDocumentUploadedByEnum("uploaded_by").notNull(),
 
-    createdAt: timestamps.createdAt,
-});
+        createdAt: timestamps.createdAt,
+    },
+    table => [
+        index("idx_patient_documents_patient_id").on(table.patientId),
+        index("idx_patient_documents_type").on(table.type),
+    ]
+);
 
 export type Patient = typeof patients.$inferSelect;
 export type NewPatient = typeof patients.$inferInsert;

@@ -4,7 +4,8 @@ import {
     pgTable,
     primaryKey,
     text,
-    uuid,
+    uniqueIndex,
+    uuid
 } from "drizzle-orm/pg-core";
 import { appointments } from "./appointments";
 import { patientDocuments } from "./patients";
@@ -17,28 +18,34 @@ export type Vitals = {
     pulse?: number;
 };
 
-export const consultations = pgTable("consultations", {
-    id: uuid("id").primaryKey().defaultRandom(),
+export const consultations = pgTable(
+    "consultations",
+    {
+        id: uuid("id").primaryKey().defaultRandom(),
 
-    appointmentId: uuid("appointment_id")
-        .notNull()
-        .references(() => appointments.id, { onDelete: "cascade" }),
+        appointmentId: uuid("appointment_id")
+            .notNull()
+            .references(() => appointments.id, { onDelete: "cascade" }),
 
-    mainComplaint: text("main_complaint").notNull(),
-    currentIllness: text("current_illness"),
-    history: text("history"),
-    symptoms: text("symptoms").notNull(),
-    vitals: jsonb("vitals").$type<Vitals>(),
+        mainComplaint: text("main_complaint").notNull(),
+        currentIllness: text("current_illness"),
+        history: text("history"),
+        symptoms: text("symptoms").notNull(),
+        vitals: jsonb("vitals").$type<Vitals>(),
 
-    diagnosis: text("diagnosis").notNull(),
-    treatmentPlan: text("treatment_plan").notNull(),
+        diagnosis: text("diagnosis").notNull(),
+        treatmentPlan: text("treatment_plan").notNull(),
 
-    followUpInstructions: text("follow_up_instructions"),
-    followUpDate: date("follow_up_date"),
-    notes: text("notes"),
+        followUpInstructions: text("follow_up_instructions"),
+        followUpDate: date("follow_up_date"),
+        notes: text("notes"),
 
-    createdAt: timestamps.createdAt,
-});
+        createdAt: timestamps.createdAt,
+    },
+    table => [
+        uniqueIndex("idx_consultations_appointment_id").on(table.appointmentId),
+    ]
+);
 
 export const consultationDocuments = pgTable(
     "consultation_documents",

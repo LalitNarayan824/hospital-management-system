@@ -52,3 +52,23 @@ export const PharmacyCategory = [
     "equipment",
     "consumables",
 ] as const;
+
+// Support Ticket Types
+export const TicketStatus = [
+    "open",
+    "in_progress",
+    "resolved",
+    "closed",
+] as const;
+export const TicketPriority = ["low", "medium", "high", "urgent"] as const;
+
+// Leave Types
+export const LeaveStatus = ["pending", "approved", "rejected"] as const;
+
+// Refund Types
+export const RefundStatus = [
+    "pending",
+    "processing",
+    "completed",
+    "rejected",
+] as const;
