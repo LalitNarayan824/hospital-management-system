@@ -13,6 +13,10 @@ export const BloodGroup = [
 
 // User Types
 export const UserRole = ["admin", "doctor", "patient"] as const;
+export const VerificationTokenType = [
+    "email_verification",
+    "password_reset",
+] as const;
 
 // Patient Types
 export const PatientDocumentType = ["report", "prescription", "other"] as const;

@@ -3,10 +3,11 @@ import {
     char,
     index,
     pgTable,
+    timestamp,
     uuid,
     varchar,
 } from "drizzle-orm/pg-core";
-import { userRoleEnum } from "./enums";
+import { userRoleEnum, verificationTokenTypeEnum } from "./enums";
 import { timestamps } from "./timestamps";
 
 export const users = pgTable(
@@ -31,5 +32,27 @@ export const users = pgTable(
     table => [index("idx_users_role").on(table.role)]
 );
 
+export const verificationTokens = pgTable(
+    "verification_tokens",
+    {
+        id: uuid("id").primaryKey().defaultRandom(),
+        userId: uuid("user_id")
+            .notNull()
+            .references(() => users.id, { onDelete: "cascade" }),
+
+        token: varchar("token", { length: 255 }).notNull(),
+        type: verificationTokenTypeEnum("type").notNull(),
+        expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+
+        createdAt: timestamps.createdAt,
+    },
+    table => [
+        index("idx_verification_tokens_user_id").on(table.userId),
+        index("idx_verification_tokens_token").on(table.token),
+    ]
+);
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type VerificationToken = typeof verificationTokens.$inferSelect;
+export type NewVerificationToken = typeof verificationTokens.$inferInsert;
